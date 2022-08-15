@@ -25,3 +25,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - uses: azure/login@v1
+        name: 'Login to Azure'
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Run Azure PowerShell script
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }}
+          azPSVersion: "latest"
