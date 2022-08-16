@@ -46,3 +46,9 @@ jobs:
         with:
           inlineScript: |
                 az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "curl -fsSL https://tailscale.com/install.sh | sh"
+
+      - name: Start Tailscale on VM using AuthKey
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ env.TAILSCALE_AUTH_KEY }}Y"
