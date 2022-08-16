@@ -38,11 +38,11 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{env.VMNAME }}
+            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{ env.VMNAME }}
           azPSVersion: "latest"
 
       - name: Install Tailscale on VM via AzCLI
         uses: azure/CLI@v1
         with:
           inlineScript: |
-                az vm run-command invoke -g myResourceGroup -n TLSCALEVM --command-id RunShellScript --scripts "curl -fsSL https://tailscale.com/install.sh | sh"
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "curl -fsSL https://tailscale.com/install.sh | sh"
