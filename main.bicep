@@ -1,4 +1,5 @@
 param location string = resourceGroup().location
+param vmName string
 
 @minLength(5)
 param vmAdminUsername string
@@ -12,5 +13,6 @@ module tailVm 'tailscale-vm.bicep' = {
     vmAdminPassword: vmAdminPassword
     vmAdminUsername: vmAdminUsername
     location: location
+    vmName: vmName
   }
 }

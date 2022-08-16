@@ -1,4 +1,5 @@
 param location string = resourceGroup().location
+param vmName string
 
 @minLength(5)
 param vmAdminUsername string
@@ -7,7 +8,7 @@ param vmAdminPassword string
 
 // Locals
 var vmProps = {
-    name: 'TLSCALEVM'
+    name: vmName
     privateIPAllocationMethod: 'Dynamic'
 }
 

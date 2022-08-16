@@ -20,6 +20,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    env:
+      VMNAME: TLSCALEVM
+      RESOURCEGROUP: tailscale-test
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -30,9 +34,15 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Run Azure PowerShell script
+      - name: Deploy to Azure
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }}
+            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{env.VMNAME }}
           azPSVersion: "latest"
+
+      - name: Install Tailscale on VM via AzCLI
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+                az vm run-command invoke -g myResourceGroup -n TLSCALEVM --command-id RunShellScript --scripts "curl -fsSL https://tailscale.com/install.sh | sh"
