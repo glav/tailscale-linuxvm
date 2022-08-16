@@ -51,4 +51,4 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ env.TAILSCALE_AUTH_KEY }}Y"
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }}"
