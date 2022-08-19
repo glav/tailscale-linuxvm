@@ -85,14 +85,14 @@ resource storageAcct 'Microsoft.Storage/storageAccounts@2019-06-01' = {
 
 // See https://tailscale.com/kb/1142/cloud-azure-linux/
 resource nsgVm 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
-  name: 'name'
+  name: '${vmName}-nsg'
   location: location
   properties: {
     securityRules: [
       {
-        name: '${vmName}-nsg'
+        name: 'Tailscale UDP'
         properties: {
-          description: 'NSG for ${vmName}'
+          description: 'UDP port 41641 for Tailscale incoming traffic'
           protocol: 'Udp'
           sourcePortRange: '*'
           destinationPortRange: '41641'
@@ -137,7 +137,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = {
         version: 'latest'
 }
       osDisk: {
-        name: 'name'
+        name: 'OsDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
