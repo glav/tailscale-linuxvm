@@ -6,7 +6,9 @@ param (
     [Parameter()]
     $AdminUserName,
     [Parameter()]
-    $AdminUserPassword
+    $AdminUserPassword,
+    [Parameter()]
+    $IotHubName
 
 )
 
@@ -17,5 +19,5 @@ $rg="tailscale-test"
 $deleteDate = get-date -Format yyyy-MM-dd
 az group create --location AustraliaEast --resource-group $ResourceGroup --tags expiresOn=$deleteDate
 
-az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName
+az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName hubName=$IotHubName
 

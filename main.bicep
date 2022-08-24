@@ -10,7 +10,7 @@ param vmAdminPassword string
 module iotHub 'iot-hub.bicep' = {
   name: 'iot-hub-deploy'
   params: {
-    hubName: 'tailscale-iot-hub'
+    hubName: hubName
     location: location
   }
 }
