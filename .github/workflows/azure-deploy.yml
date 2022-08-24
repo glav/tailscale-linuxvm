@@ -41,6 +41,7 @@ jobs:
             ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{ env.VMNAME }}
           azPSVersion: "latest"
 
+      # Should refactor these separate calls into one script to check for validity. support error handling etc
       - name: Install Tailscale on VM via AzCLI
         uses: azure/CLI@v1
         with:

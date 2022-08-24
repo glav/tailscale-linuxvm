@@ -6,6 +6,13 @@ param vmAdminUsername string
 @secure()
 param vmAdminPassword string
 
+module network 'private-endpoint.bicep' = {
+  name: 'network-tailscale-deploy'
+  params: {
+    vmName: vmName
+    location: location
+  }
+}
 
 module tailVm 'tailscale-vm.bicep' = {
   name: 'tailvm-deploy'
@@ -14,5 +21,6 @@ module tailVm 'tailscale-vm.bicep' = {
     vmAdminUsername: vmAdminUsername
     location: location
     vmName: vmName
+    nicVmId: network.outputs.nicId
   }
 }
