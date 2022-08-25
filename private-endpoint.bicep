@@ -165,7 +165,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[0].id
+            id: virtualNetwork.properties.subnets[1].id  // PLace on the VM Subnet
           }
           primary: true
           privateIPAddressVersion: 'IPv4'
@@ -177,7 +177,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubServiceBusPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[1].id
+            id: virtualNetwork.properties.subnets[1].id  // PLace on the VM Subnet
           }
           primary: false
           privateIPAddressVersion: 'IPv4'
