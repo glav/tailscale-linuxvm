@@ -23,6 +23,7 @@ jobs:
     env:
       VMNAME: TLSCALEVM
       RESOURCEGROUP: tailscale-test
+      IOTHUBNAME: tailscale-iot-hub
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -38,9 +39,10 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{ env.VMNAME }}
+            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{ env.VMNAME }} -IotHubName ${{ env.IOTHUBNAME }}
           azPSVersion: "latest"
 
+      # Should refactor these separate calls into one script to check for validity. support error handling etc
       - name: Install Tailscale on VM via AzCLI
         uses: azure/CLI@v1
         with:
@@ -51,4 +53,4 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false"
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false" --advertise-exit-node
