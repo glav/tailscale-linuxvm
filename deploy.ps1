@@ -24,7 +24,7 @@ if (!$grpResult) {
     exit(1)
 }
 
-$output = az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName hubName=$IotHubName
+$output = az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName hubName=$ --name InfraDeploymentPipeline
 if (!$output) {
     Write-Error "Error deploying to resource group [$ResourceGroup]"
     Write-Host "##vso[task.logissue type=error]Depployment failed. Please check the detailed logs."
