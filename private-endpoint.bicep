@@ -24,18 +24,18 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         name: 'Default'
         properties: {
           addressPrefix: '10.1.0.0/24'
-          networkSecurityGroup: {
-            id: nsgVm.id
-            location: location
-          }
           privateEndpointNetworkPolicies: 'Disabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
         }
       }
       {
-        name: 'Subnet-2'
+        name: 'VMSubnet'
         properties: {
           addressPrefix: '10.1.1.0/24'
+          networkSecurityGroup: {
+            id: nsgVm.id
+            location: location
+          }
         }
       }
     ]
@@ -177,7 +177,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubServiceBusPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[0].id
+            id: virtualNetwork.properties.subnets[1].id
           }
           primary: false
           privateIPAddressVersion: 'IPv4'
@@ -187,15 +187,15 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   }
 }
 
-resource privateEndpointConnectionToHub 'Microsoft.Devices/iotHubs/privateEndpointConnections@2021-07-02' = {
-  name: '${iotHubName}/${iotHubName}.${uniqueString(resourceGroup().id)}'
-  properties: {
-    privateLinkServiceConnectionState: {
-      description: 'Auto-Approved'
-      status: 'Approved'
-    }
-  }
-}
+// resource privateEndpointConnectionToHub 'Microsoft.Devices/iotHubs/privateEndpointConnections@2021-07-02' = {
+//   name: '${iotHubName}/${iotHubName}.${uniqueString(resourceGroup().id)}'
+//   properties: {
+//     privateLinkServiceConnectionState: {
+//       description: 'Auto-Approved'
+//       status: 'Approved'
+//     }
+//   }
+// }
 
 // See https://tailscale.com/kb/1142/cloud-azure-linux/
 resource nsgVm 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
@@ -221,7 +221,8 @@ resource nsgVm 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
   }
 }
 
-output subnetId string = virtualNetwork.properties.subnets[0].id
+output subnetIdDefault string = virtualNetwork.properties.subnets[0].id
+output subnetIdSecondary string = virtualNetwork.properties.subnets[0].id
 output vnetId string = virtualNetwork.id
 output nicId string = nicVm.id
 output nsgId string = nsgVm.id
