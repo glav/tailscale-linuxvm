@@ -85,6 +85,9 @@ resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: privateDnsZoneName
   location: 'global'
   properties: {}
+  dependsOn: [
+    virtualNetwork
+  ]
 }
 
 resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {

@@ -19,6 +19,8 @@ module network 'private-endpoint.bicep' = {
   params: {
     vmName: vmName
     location: location
+    iotHubId: iotHub.outputs.hubId
+    iotHubName: hubName
   }
 }
 
