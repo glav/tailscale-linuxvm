@@ -20,12 +20,16 @@ $deleteDate = get-date -Format yyyy-MM-dd
 $grpResult = az group create --location AustraliaEast --resource-group $ResourceGroup --tags expiresOn=$deleteDate
 if (!$grpResult) {
     Write-Error "Error creating the resource group [$ResourceGroup]"
-    return
+    Write-Host "##vso[task.logissue type=error]Resource group creation failed."
+    exit(1)
 }
 
 $output = az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName hubName=$IotHubName
 if (!$output) {
     Write-Error "Error deploying to resource group [$ResourceGroup]"
-    return
+    Write-Host "##vso[task.logissue type=error]Depployment failed. Please check the detailed logs."
+    exit(1)
 }
+
+  
 
