@@ -179,7 +179,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           subnet: {
             id: virtualNetwork.properties.subnets[0].id
           }
-          primary: true
+          primary: false
           privateIPAddressVersion: 'IPv4'
         }
       }
