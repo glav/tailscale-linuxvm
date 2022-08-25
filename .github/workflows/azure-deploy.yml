@@ -53,4 +53,4 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false" --advertise-exit-node
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false --advertise-exit-node"
