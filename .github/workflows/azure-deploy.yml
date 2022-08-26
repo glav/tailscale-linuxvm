@@ -56,9 +56,10 @@ jobs:
           inlineScript: |
                 az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false --advertise-exit-node"
 
-      - name: Create a test device in IoT hub
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-                az config set extension.use_dynamic_install=yes_without_prompt
-                az iot hub device-identity create -n "${{ env.IOTHUBNAME }}" -d "${{ env.IOTTESTDEVICENAME }}"
+      # This wont work when public access is disabled. Need to figure out a way to enable/disable public access programmatically.
+      # - name: Create a test device in IoT hub
+      #   uses: azure/CLI@v1
+      #   with:
+      #     inlineScript: |
+      #           az config set extension.use_dynamic_install=yes_without_prompt
+      #           az iot hub device-identity create -n "${{ env.IOTHUBNAME }}" -d "${{ env.IOTTESTDEVICENAME }}"
