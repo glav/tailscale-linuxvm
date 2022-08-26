@@ -1,14 +1,16 @@
 param (
     [Parameter()]
-    $ResourceGroup,
+    [string]$ResourceGroup,
     [Parameter()]
-    $VmName,
+    [string]$VmName,
     [Parameter()]
-    $AdminUserName,
+    [string]$AdminUserName,
     [Parameter()]
-    $AdminUserPassword,
+    [string]$AdminUserPassword,
     [Parameter()]
-    $IotHubName
+    [string]$IotHubName,
+    [Parameter()]
+    [bool]$EnableIotHubAccess
 
 )
 
@@ -24,7 +26,7 @@ if (!$grpResult) {
     exit(1)
 }
 
-$output = az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName hubName=$IotHubName --name MainDeploymentPipeline
+$output = az deployment group create --resource-group $rg --template-file .\main.bicep  --parameters vmAdminUsername=$AdminUserName vmAdminPassword=$AdminUserPassword vmName=$VmName hubName=$IotHubName enableIotHubPublicAccess=$EnableIotHubAccess --name MainDeploymentPipeline
 if (!$output) {
     Write-Error "Error deploying to resource group [$ResourceGroup]"
     Write-Host "##vso[task.logissue type=error]Depployment failed. Please check the detailed logs."

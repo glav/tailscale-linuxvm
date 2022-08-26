@@ -25,6 +25,7 @@ jobs:
       RESOURCEGROUP: tailscale-test
       IOTHUBNAME: tailscale-iot-hub
       IOTTESTDEVICENAME: testdevice
+      ENABLEIOTHUBPUBLICACCESS: true
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -40,7 +41,7 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{ env.VMNAME }} -IotHubName ${{ env.IOTHUBNAME }}
+            ./deploy.ps1 -AdminUserName ${{ secrets.AdminUserName }} -AdminUserPassword ${{ secrets.AdminUserPassword }} -ResourceGroup  ${{ env.RESOURCEGROUP}} -VmName ${{ env.VMNAME }} -IotHubName ${{ env.IOTHUBNAME }} -EnableIotHubAccess ${{ env.ENABLEIOTHUBPUBLICACCESS }}
           azPSVersion: "latest"
 
       # Should refactor these separate calls into one script to check for validity. support error handling etc
