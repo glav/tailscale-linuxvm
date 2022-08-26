@@ -1,9 +1,11 @@
 param location string = resourceGroup().location
 param hubName string
+param enableIotHubPublicAccess bool = true
 
 var storageAccountName = 'saiothub${uniqueString(resourceGroup().id)}'
 var storageContainerName = 'iothubresults'
 var storageEndpoint = 'iotStorageEndpont'
+var iotPublicAccessState = enableIotHubPublicAccess ? 'Enabled' : 'Disabled'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   name: storageAccountName
@@ -17,7 +19,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
   name: '${storageAccountName}/default/${storageContainerName}'
   properties: {
-    publicAccess: 'None'
+    publicAccess:  'None'
   }
   dependsOn: [
     storageAccount
@@ -37,7 +39,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
   properties: {
     features: 'DeviceManagement'
     disableLocalAuth: false
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: iotPublicAccessState
     privateEndpointConnections: [
       {
         properties: {

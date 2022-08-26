@@ -1,6 +1,7 @@
 param location string = resourceGroup().location
 param vmName string
 param hubName string
+param enableIotHubPublicAccess bool = true
 
 @minLength(5)
 param vmAdminUsername string
@@ -12,6 +13,7 @@ module iotHub 'iot-hub.bicep' = {
   params: {
     hubName: hubName
     location: location
+    enableIotHubPublicAccess: enableIotHubPublicAccess
   }
 }
 module network 'private-endpoint.bicep' = {
