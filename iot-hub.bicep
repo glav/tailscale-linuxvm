@@ -14,6 +14,16 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   kind: 'Storage'
 }
 
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
+  name: '${storageAccountName}/default/${storageContainerName}'
+  properties: {
+    publicAccess: 'None'
+  }
+  dependsOn: [
+    storageAccount
+  ]
+}
+
 resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
   name: hubName
   location: location
