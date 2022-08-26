@@ -3,7 +3,7 @@ param hubName string
 
 var storageAccountName = 'saiothub${uniqueString(resourceGroup().id)}'
 var storageContainerName = 'iothubresults'
-var storageEndpoint = 'TailscaleIotStorageEndpont'
+var storageEndpoint = 'iotStorageEndpont'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   name: storageAccountName
