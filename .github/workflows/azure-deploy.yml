@@ -59,7 +59,7 @@ jobs:
 
       # This wont work when public access is disabled. Need to figure out a way to enable/disable public access programmatically.
       - name: 'Create a test device in IoT hub'
-        if: ${{ env.ENABLEIOTHUBPUBLICACCESS == $True }}
+        if: ${{ env.ENABLEIOTHUBPUBLICACCESS == '$True' }}
         uses: azure/CLI@v1
         with:
           inlineScript: |
