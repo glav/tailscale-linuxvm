@@ -35,7 +35,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
     type: 'SystemAssigned'
   }
   properties: {
-    features: 'DeviceManagement'
+    features: 'GWV2'
     disableLocalAuth: false
     publicNetworkAccess: 'Disabled'
     privateEndpointConnections: [
