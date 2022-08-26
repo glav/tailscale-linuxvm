@@ -54,7 +54,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
       }
       routes: [
         {
-          name: 'ContosoStorageRoute'
+          name: 'TailscaleStorageRoute'
           source: 'DeviceMessages'
           condition: 'level="storage"'
           endpointNames: [
