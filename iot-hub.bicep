@@ -11,7 +11,6 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
   properties: {
     features: 'DeviceManagement'
     disableLocalAuth: false
-    enableDataResidency: false
     publicNetworkAccess: 'Disabled'
     privateEndpointConnections: [
       {
