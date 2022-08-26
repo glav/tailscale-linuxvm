@@ -25,7 +25,7 @@ jobs:
       RESOURCEGROUP: tailscale-test
       IOTHUBNAME: tailscale-iot-hub
       IOTTESTDEVICENAME: testdevice
-      ENABLEIOTHUBPUBLICACCESS: true
+      ENABLEIOTHUBPUBLICACCESS: $True
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -55,12 +55,13 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false --advertise-exit-node"
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false --advertise-exit-node --accept-routes"
 
       # This wont work when public access is disabled. Need to figure out a way to enable/disable public access programmatically.
-      # - name: Create a test device in IoT hub
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #           az config set extension.use_dynamic_install=yes_without_prompt
-      #           az iot hub device-identity create -n "${{ env.IOTHUBNAME }}" -d "${{ env.IOTTESTDEVICENAME }}"
+      - name: 'Create a test device in IoT hub'
+        if: ${{ env.ENABLEIOTHUBPUBLICACCESS == $True }}
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+                az config set extension.use_dynamic_install=yes_without_prompt
+                az iot hub device-identity create -n "${{ env.IOTHUBNAME }}" -d "${{ env.IOTTESTDEVICENAME }}"
