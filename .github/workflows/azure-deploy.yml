@@ -57,7 +57,15 @@ jobs:
           inlineScript: |
                 az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,168.63.129.16/32 --accept-dns=false --advertise-exit-node --accept-routes"
 
-      # This wont work when public access is disabled. Need to figure out a way to enable/disable public access programmatically.
+      # If we are disabling public access then we need to enable it here so we can perform further steps that require the public API
+      - name: 'Enable public access to allow adding device public access'
+        if: ${{ env.ENABLEIOTHUBPUBLICACCESS == '$False' }}
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+                az iot hub update --name "${{ env.IOTHUBNAME }}" --set properties.publicNetworkAccess="Enabled"
+
+      # This requires public access to be enabled
       - name: 'Create a test device in IoT hub'
         if: ${{ env.ENABLEIOTHUBPUBLICACCESS == '$True' }}
         uses: azure/CLI@v1
@@ -65,3 +73,11 @@ jobs:
           inlineScript: |
                 az config set extension.use_dynamic_install=yes_without_prompt
                 az iot hub device-identity create -n "${{ env.IOTHUBNAME }}" -d "${{ env.IOTTESTDEVICENAME }}"
+
+      # Finally disable public access if that is defined.
+      - name: 'Disable public access'
+        if: ${{ env.ENABLEIOTHUBPUBLICACCESS == '$False' }}
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+                az iot hub update --name "${{ env.IOTHUBNAME }}" --set properties.publicNetworkAccess="Disabled"
