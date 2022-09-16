@@ -6,8 +6,8 @@ param iotHubId string
 var privateEndpointName = 'priv-endpoint'
 var privateDnsZoneName = 'privatelink.azure-devices.net'
 var pvtEndpointDnsGroupName = '${privateEndpointName}/${vmName}dnsgroup'
-var iotHubPrivateIp = '10.1.0.4'
-var iotHubServiceBusPrivateIp = '10.1.0.5'
+var iotHubPrivateIp = '10.1.3.4'
+var iotHubServiceBusPrivateIp = '10.1.3.5'
 var iotHubNsName = 'iothub-ns-${iotHubName}'
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
@@ -170,8 +170,8 @@ resource dnsZoneSOA 'Microsoft.Network/privateDnsZones/SOA@2018-09-01' = {
   }
 }
 
-resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: 'nic-${vmName}'
+resource nicIot 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: 'nic-${iotHubName}'
   location: location
   properties: {
     ipConfigurations: [
@@ -179,7 +179,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         name: 'nic-private-endpoint-config1-iot-private-ip'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
-          privateIPAddress: iotHubPrivateIp
+          //privateIPAddress: iotHubPrivateIp
           subnet: {
             id: virtualNetwork.properties.subnets[3].id  // PLace on the VM Subnet
           }
@@ -191,11 +191,32 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         name: 'nic-private-endpoint-config2-iot-service-bus-private-ip'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
-          privateIPAddress: iotHubServiceBusPrivateIp
+          //privateIPAddress: iotHubServiceBusPrivateIp
           subnet: {
             id: virtualNetwork.properties.subnets[3].id  // PLace on the iot Subnet
           }
           primary: false
+          privateIPAddressVersion: 'IPv4'
+        }
+      }
+    ]
+  }
+}
+
+resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: 'nic-${vmName}'
+  location: location
+  properties: {
+    ipConfigurations: [
+      {
+        name: 'nic-vm'
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          //privateIPAddress: iotHubPrivateIp
+          subnet: {
+            id: virtualNetwork.properties.subnets[2].id  // PLace on the VM Subnet
+          }
+          primary: true
           privateIPAddressVersion: 'IPv4'
         }
       }

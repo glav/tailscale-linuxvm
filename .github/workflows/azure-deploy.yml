@@ -57,6 +57,12 @@ jobs:
           inlineScript: |
                 az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts "tailscale up --authkey ${{ secrets.TAILSCALE_AUTH_KEY }} --advertise-routes=10.1.0.0/24,10.1.1.0/24,10.1.2.0/24,10.1.3.0/24,168.63.129.16/32 --accept-dns=false --advertise-exit-node --accept-routes"
 
+      - name: Enable IP forwarding on VM
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+                az vm run-command invoke -g ${{ env.RESOURCEGROUP}} -n ${{ env.VMNAME }} --command-id RunShellScript --scripts @enable-ip-forwarding.sh
+
       # If we are disabling public access then we need to enable it here so we can perform further steps that require the public API
       - name: 'Enable public access to allow adding device public access'
         if: ${{ env.ENABLEIOTHUBPUBLICACCESS == '$False' }}
