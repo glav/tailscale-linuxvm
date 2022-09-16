@@ -38,20 +38,20 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         name: 'VMSubnet'
         properties: {
           addressPrefix: '10.1.2.0/24'
-          networkSecurityGroup: {
-            id: nsgVm.id
-            location: location
-          }
+          // networkSecurityGroup: {
+          //   id: nsgVm.id
+          //   location: location
+          // }
         }
       }
       {
         name: 'iotSubnet'
         properties: {
           addressPrefix: '10.1.3.0/24'
-          networkSecurityGroup: {
-            id: nsgVm.id
-            location: location
-          }
+          // networkSecurityGroup: {
+          //   id: nsgVm.id
+          //   location: location
+          // }
         }
       }
     ]
