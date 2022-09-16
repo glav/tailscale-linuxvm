@@ -176,19 +176,19 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   properties: {
     ipConfigurations: [
       {
-        name: 'nic-private-endpoint-config1'
+        name: 'nic-private-endpoint-config1-iot-private-ip'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[2].id  // PLace on the VM Subnet
+            id: virtualNetwork.properties.subnets[3].id  // PLace on the VM Subnet
           }
           primary: true
           privateIPAddressVersion: 'IPv4'
         }
       }
       {
-        name: 'nic-private-endpoint-config2'
+        name: 'nic-private-endpoint-config2-iot-service-bus-private-ip'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubServiceBusPrivateIp
