@@ -6,7 +6,7 @@ param iotHubId string
 var privateEndpointName = 'priv-endpoint'
 var privateDnsZoneName = 'privatelink.azure-devices.net'
 var pvtEndpointDnsGroupName = '${privateEndpointName}/${vmName}dnsgroup'
-var iotHubPrivateIp = '10.1.3.4'
+//var iotHubPrivateIp = '10.1.3.4'
 //var iotHubServiceBusPrivateIp = '10.1.3.5'
 var iotHubNsName = 'iothub-ns-${iotHubName}'
 
@@ -143,7 +143,7 @@ resource dnsZoneAHub 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
     ttl: 3600
     aRecords: [
       {
-        ipv4Address: iotHubPrivateIp
+        ipv4Address: nicIot.properties.ipConfigurations[0].properties.privateIPAddress
       }
     ]  
   }
@@ -155,7 +155,7 @@ resource dnsZoneABus 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
     ttl: 3600
     aRecords: [
       {
-        ipv4Address: virtualNetwork.properties.subnets[3].id
+        ipv4Address: nicIot.properties.ipConfigurations[1].properties.privateIPAddress
       }
     ]  
   }
