@@ -7,7 +7,7 @@ var privateEndpointName = 'priv-endpoint'
 var privateDnsZoneName = 'privatelink.azure-devices.net'
 var pvtEndpointDnsGroupName = '${privateEndpointName}/${vmName}dnsgroup'
 var iotHubPrivateIp = '10.1.3.4'
-var iotHubServiceBusPrivateIp = '10.1.3.5'
+//var iotHubServiceBusPrivateIp = '10.1.3.5'
 var iotHubNsName = 'iothub-ns-${iotHubName}'
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
@@ -84,13 +84,15 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
       {
         fqdn: '${iotHubName}.azure-devices.net'
         ipAddresses: [
-          iotHubPrivateIp
+          nicIot.properties.ipConfigurations[0].properties.privateIPAddress
+          //iotHubPrivateIp
         ]
       }
       {
         fqdn: '${iotHubNsName}.servicebus.windows.net'
         ipAddresses: [
-          iotHubServiceBusPrivateIp
+          nicIot.properties.ipConfigurations[1].properties.privateIPAddress
+          //iotHubServiceBusPrivateIp
         ]
       }
     ]
@@ -153,7 +155,7 @@ resource dnsZoneABus 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
     ttl: 3600
     aRecords: [
       {
-        ipv4Address: iotHubServiceBusPrivateIp
+        ipv4Address: virtualNetwork.properties.subnets[3].id
       }
     ]  
   }
