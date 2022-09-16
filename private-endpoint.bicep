@@ -29,9 +29,29 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         }
       }
       {
-        name: 'VMSubnet'
+        name: 'GatewaySubnet'
         properties: {
           addressPrefix: '10.1.1.0/24'
+          networkSecurityGroup: {
+            id: nsgVm.id
+            location: location
+          }
+        }
+      }
+      {
+        name: 'VMSubnet'
+        properties: {
+          addressPrefix: '10.1.2.0/24'
+          networkSecurityGroup: {
+            id: nsgVm.id
+            location: location
+          }
+        }
+      }
+      {
+        name: 'iotSubnet'
+        properties: {
+          addressPrefix: '10.1.3.0/24'
           networkSecurityGroup: {
             id: nsgVm.id
             location: location
@@ -165,7 +185,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[1].id  // PLace on the VM Subnet
+            id: virtualNetwork.properties.subnets[2].id  // PLace on the VM Subnet
           }
           primary: true
           privateIPAddressVersion: 'IPv4'
@@ -177,7 +197,7 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           privateIPAddress: iotHubServiceBusPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[1].id  // PLace on the VM Subnet
+            id: virtualNetwork.properties.subnets[3].id  // PLace on the iot Subnet
           }
           primary: false
           privateIPAddressVersion: 'IPv4'
@@ -222,7 +242,9 @@ resource nsgVm 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
 }
 
 output subnetIdDefault string = virtualNetwork.properties.subnets[0].id
-output subnetIdSecondary string = virtualNetwork.properties.subnets[0].id
+output subnetIdGateway string = virtualNetwork.properties.subnets[1].id
+output subnetIdVM string = virtualNetwork.properties.subnets[2].id
+output subnetIdIotHub string = virtualNetwork.properties.subnets[3].id
 output vnetId string = virtualNetwork.id
 output nicId string = nicVm.id
 output nsgId string = nsgVm.id
