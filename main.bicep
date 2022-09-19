@@ -13,7 +13,7 @@ var storageAccountNameIot = 'saiothub${uniqueString(resourceGroup().id)}'
 var storageContainerNameIot = 'iothubresults'
 var storageAcctNameVm = 'savm${uniqueString(resourceGroup().id)}'
 
-module network 'private-endpoint.bicep' = {
+module network 'networking.bicep' = {
   name: 'network-tailscale-deploy'
   params: {
     vmName: vmName
