@@ -2,28 +2,14 @@ param location string = resourceGroup().location
 param hubName string
 param enableIotHubPublicAccess bool = true
 
-var storageAccountName = 'saiothub${uniqueString(resourceGroup().id)}'
-var storageContainerName = 'iothubresults'
+param storageAccountName string
+param storageContainerName string
+
 var storageEndpoint = 'iotStorageEndpont'
 var iotPublicAccessState = enableIotHubPublicAccess ? 'Enabled' : 'Disabled'
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' existing = {
   name: storageAccountName
-  location: location
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'Storage'
-}
-
-resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
-  name: '${storageAccountName}/default/${storageContainerName}'
-  properties: {
-    publicAccess:  'None'
-  }
-  dependsOn: [
-    storageAccount
-  ]
 }
 
 resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
@@ -77,9 +63,6 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
       ]
     }
   }
-  dependsOn: [
-    container
-  ]
 }
 
 output hubHostName string = iotHub.properties.hostName

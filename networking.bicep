@@ -6,8 +6,6 @@ param iotHubId string
 var privateEndpointName = 'priv-endpoint'
 var privateDnsZoneName = 'privatelink.azure-devices.net'
 var pvtEndpointDnsGroupName = '${privateEndpointName}/${vmName}dnsgroup'
-//var iotHubPrivateIp = '10.1.3.4'
-//var iotHubServiceBusPrivateIp = '10.1.3.5'
 var iotHubNsName = 'iothub-ns-${iotHubName}'
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
@@ -32,12 +30,16 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         name: 'GatewaySubnet'
         properties: {
           addressPrefix: '10.1.1.0/24'
+          privateEndpointNetworkPolicies: 'Disabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
         }
       }
       {
         name: 'VMSubnet'
         properties: {
           addressPrefix: '10.1.2.0/24'
+          privateEndpointNetworkPolicies: 'Disabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
           // networkSecurityGroup: {
           //   id: nsgVm.id
           //   location: location
@@ -48,6 +50,17 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         name: 'iotSubnet'
         properties: {
           addressPrefix: '10.1.3.0/24'
+          privateEndpointNetworkPolicies: 'Disabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Storage'
+              locations: [
+                'AustraliaEast'
+                'AustraliaSouthEast'
+              ]
+            }
+          ]
           // networkSecurityGroup: {
           //   id: nsgVm.id
           //   location: location
