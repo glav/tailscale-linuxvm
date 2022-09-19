@@ -41,6 +41,9 @@ module iotHub 'iot-hub.bicep' = {
     storageAccountName: storageAccountNameIot
     storageContainerName: storageContainerNameIot
   }
+  dependsOn: [
+    storage
+  ]
 }
 
 module privateEndpoints 'private-endpoints.bicep' = {
