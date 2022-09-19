@@ -1,12 +1,4 @@
 param location string = resourceGroup().location
-param vmName string
-param iotHubName string
-param iotHubId string
-
-var privateEndpointName = 'priv-endpoint'
-var privateDnsZoneName = 'privatelink.azure-devices.net'
-var pvtEndpointDnsGroupName = '${privateEndpointName}/${vmName}dnsgroup'
-var iotHubNsName = 'iothub-ns-${iotHubName}'
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   name: 'main-vnet'
@@ -71,122 +63,9 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   }
 }
 
-resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
-  name: privateEndpointName
-  location: location
-  properties: {
-    subnet: {
-      id: virtualNetwork.properties.subnets[0].id
-    }
-    privateLinkServiceConnections: [
-      {
-        name: privateEndpointName
-        properties: {
-          privateLinkServiceId: iotHubId
-          groupIds: [
-            'iotHub'
-          ]
-          privateLinkServiceConnectionState: {
-            status: 'Approved'
-            description: 'Auto-Approved'
-          }
-        }
-      }
-    ]
-    customDnsConfigs: [
-      {
-        fqdn: '${iotHubName}.azure-devices.net'
-        ipAddresses: [
-          nicIot.properties.ipConfigurations[0].properties.privateIPAddress
-          //iotHubPrivateIp
-        ]
-      }
-      {
-        fqdn: '${iotHubNsName}.servicebus.windows.net'
-        ipAddresses: [
-          nicIot.properties.ipConfigurations[1].properties.privateIPAddress
-          //iotHubServiceBusPrivateIp
-        ]
-      }
-    ]
-  }
-}
-
-resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: privateDnsZoneName
-  location: 'global'
-  properties: {}
-  dependsOn: [
-    virtualNetwork
-  ]
-}
-
-resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: privateDnsZone
-  name: '${privateDnsZoneName}-link'
-  location: 'global'
-  properties: {
-    registrationEnabled: false
-    virtualNetwork: {
-      id: virtualNetwork.id
-    }
-  }
-}
-
-resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
-  name: pvtEndpointDnsGroupName
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'config1'
-        properties: {
-          privateDnsZoneId: privateDnsZone.id
-        }
-      }
-    ]
-  }
-  dependsOn: [
-    privateEndpoint
-  ]
-}
-
-resource dnsZoneAHub 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
-  name: '${privateDnsZone.name}/${iotHubName}'
-  properties: {
-    ttl: 3600
-    aRecords: [
-      {
-        ipv4Address: nicIot.properties.ipConfigurations[0].properties.privateIPAddress
-      }
-    ]  
-  }
-}
-
-resource dnsZoneABus 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
-  name: '${privateDnsZone.name}/${iotHubNsName}.serv'
-  properties: {
-    ttl: 3600
-    aRecords: [
-      {
-        ipv4Address: nicIot.properties.ipConfigurations[1].properties.privateIPAddress
-      }
-    ]  
-  }
-}
-
-resource dnsZoneSOA 'Microsoft.Network/privateDnsZones/SOA@2018-09-01' = {
-  name: '${privateDnsZone.name}/@'
-  properties: {
-    ttl: 3600
-    soaRecord: {
-      email:'azureprivatedns-host.microsoft.com'
-      host: 'azureprivatedns.net'
-    }
-  }
-}
 
 resource nicIot 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: 'nic-${iotHubName}'
+  name: 'nic-iot-hub'
   location: location
   properties: {
     ipConfigurations: [
@@ -196,7 +75,7 @@ resource nicIot 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           //privateIPAddress: iotHubPrivateIp
           subnet: {
-            id: virtualNetwork.properties.subnets[3].id  // PLace on the VM Subnet
+            id: virtualNetwork.properties.subnets[3].id  // PLace on the iot Subnet
           }
           primary: true
           privateIPAddressVersion: 'IPv4'
@@ -219,7 +98,7 @@ resource nicIot 'Microsoft.Network/networkInterfaces@2020-05-01' = {
 }
 
 resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: 'nic-${vmName}'
+  name: 'nic-virtual-machine-gateway'
   location: location
   properties: {
     ipConfigurations: [
@@ -239,19 +118,9 @@ resource nicVm 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   }
 }
 
-// resource privateEndpointConnectionToHub 'Microsoft.Devices/iotHubs/privateEndpointConnections@2021-07-02' = {
-//   name: '${iotHubName}/${iotHubName}.${uniqueString(resourceGroup().id)}'
-//   properties: {
-//     privateLinkServiceConnectionState: {
-//       description: 'Auto-Approved'
-//       status: 'Approved'
-//     }
-//   }
-// }
-
 // See https://tailscale.com/kb/1142/cloud-azure-linux/
 resource nsgVm 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
-  name: '${vmName}-nsg'
+  name: 'nsg-main'
   location: location
   properties: {
     securityRules: [
@@ -280,3 +149,5 @@ output subnetIdIotHub string = virtualNetwork.properties.subnets[3].id
 output vnetId string = virtualNetwork.id
 output nicId string = nicVm.id
 output nsgId string = nsgVm.id
+output nicIotHubPrivateIp string = nicIot.properties.ipConfigurations[0].properties.privateIPAddress
+output nicIotSvcBusPrivateIp string = nicIot.properties.ipConfigurations[1].properties.privateIPAddress
