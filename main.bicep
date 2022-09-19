@@ -8,8 +8,10 @@ param vmAdminUsername string
 @secure()
 param vmAdminPassword string
 
-var storageAccountName = 'saiothub${uniqueString(resourceGroup().id)}'
-var storageContainerName = 'iothubresults'
+// Common storage account names
+var storageAccountNameIot = 'saiothub${uniqueString(resourceGroup().id)}'
+var storageContainerNameIot = 'iothubresults'
+var storageAcctNameVm = 'savm${uniqueString(resourceGroup().id)}'
 
 module network 'private-endpoint.bicep' = {
   name: 'network-tailscale-deploy'
@@ -26,8 +28,9 @@ module storage 'storage.bicep' = {
   params: {
     subnetIdIotHub: network.outputs.subnetIdIotHub
     location: location
-    storageAccountName: storageAccountName
-    storageContainerName: storageContainerName
+    storageAccountNameIot: storageAccountNameIot
+    storageContainerNameIot: storageContainerNameIot
+    storageAccountNameVm: storageAcctNameVm
   }
 }
 
@@ -37,8 +40,8 @@ module iotHub 'iot-hub.bicep' = {
     hubName: hubName
     location: location
     enableIotHubPublicAccess: enableIotHubPublicAccess
-    storageAccountName: storageAccountName
-    storageContainerName: storageContainerName
+    storageAccountName: storageAccountNameIot
+    storageContainerName: storageContainerNameIot
   }
 }
 
@@ -50,5 +53,6 @@ module tailVm 'tailscale-vm.bicep' = {
     location: location
     vmName: vmName
     nicVmId: network.outputs.nicId
+    vmStorageAccountBlobEndpoint: storage.outputs.vmStorageAccountBlobEndpoint
   }
 }

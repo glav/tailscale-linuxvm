@@ -6,29 +6,9 @@ param nicVmId string
 param vmAdminUsername string
 @secure()
 param vmAdminPassword string
+param vmStorageAccountBlobEndpoint string
 
-var storageAcctName = 'sa${uniqueString(resourceGroup().id)}'
-var saAcctType = 'Standard_LRS'
 var vmSize = 'Standard_D2s_v3'
-
-//var dnsLabelPrefix = '${vmProps.name}-${uniqueString(resourceGroup().id, vmProps.name)}'
-
-// resources
-
-
-resource storageAcct 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAcctName
-  location: location
-  kind: 'StorageV2'
-  sku: {
-    name: saAcctType
-  }
-  properties: {
-    allowBlobPublicAccess: false
-    supportsHttpsTrafficOnly: true
-    minimumTlsVersion: 'TLS1_2'
-  }
-}
 
 resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: vmName
@@ -76,7 +56,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = {
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageAcct.properties.primaryEndpoints.blob
+        storageUri: vmStorageAccountBlobEndpoint
       }
     }
   }

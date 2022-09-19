@@ -1,13 +1,16 @@
 param location string = resourceGroup().location
-param storageAccountName string
-param storageContainerName string
+param storageAccountNameIot string
+param storageContainerNameIot string
 param subnetIdIotHub string
+param storageAccountNameVm string
+
+var saAcctType = 'Standard_LRS'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: storageAccountName
+  name: storageAccountNameIot
   location: location
   sku: {
-    name: 'Standard_LRS'
+    name: saAcctType
   }
   properties: {
     minimumTlsVersion: 'TLS1_2'
@@ -22,12 +25,13 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
       ]
       defaultAction: 'Deny'
     }
+    supportsHttpsTrafficOnly: true
   }
   kind: 'Storage'
 }
 
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
-  name: '${storageAccountName}/default/${storageContainerName}'
+  name: '${storageAccountNameIot}/default/${storageContainerNameIot}'
   properties: {
     publicAccess:  'None'
   }
@@ -36,5 +40,20 @@ resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@20
   ]
 }
 
-output storageAccountName string = storageAccountName
-output storageContainerName string = storageContainerName
+resource storageAcctVM 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountNameVm
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: saAcctType
+  }
+  properties: {
+    allowBlobPublicAccess: false
+    supportsHttpsTrafficOnly: true
+    minimumTlsVersion: 'TLS1_2'
+  }
+}
+
+output storageAccountName string = storageAccountNameIot
+output storageContainerName string = storageContainerNameIot
+output vmStorageAccountBlobEndpoint string = storageAcctVM.properties.primaryEndpoints.blob
