@@ -8,14 +8,9 @@ param vmAdminUsername string
 @secure()
 param vmAdminPassword string
 
-module iotHub 'iot-hub.bicep' = {
-  name: 'iot-hub-deploy'
-  params: {
-    hubName: hubName
-    location: location
-    enableIotHubPublicAccess: enableIotHubPublicAccess
-  }
-}
+var storageAccountName = 'saiothub${uniqueString(resourceGroup().id)}'
+var storageContainerName = 'iothubresults'
+
 module network 'private-endpoint.bicep' = {
   name: 'network-tailscale-deploy'
   params: {
@@ -23,6 +18,27 @@ module network 'private-endpoint.bicep' = {
     location: location
     iotHubId: iotHub.outputs.hubId
     iotHubName: hubName
+  }
+}
+
+module storage 'storage.bicep' = {
+  name: 'storage-iot-hub'
+  params: {
+    subnetIdIotHub: network.outputs.subnetIdIotHub
+    location: location
+    storageAccountName: storageAccountName
+    storageContainerName: storageContainerName
+  }
+}
+
+module iotHub 'iot-hub.bicep' = {
+  name: 'iot-hub-deploy'
+  params: {
+    hubName: hubName
+    location: location
+    enableIotHubPublicAccess: enableIotHubPublicAccess
+    storageAccountName: storageAccountName
+    storageContainerName: storageContainerName
   }
 }
 
