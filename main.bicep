@@ -31,6 +31,7 @@ module storage 'storage.bicep' = {
     storageAccountNameIot: storageAccountNameIot
     storageContainerNameIot: storageContainerNameIot
     storageAccountNameVm: storageAcctNameVm
+    subnetIdVm: network.outputs.subnetIdVM
   }
 }
 

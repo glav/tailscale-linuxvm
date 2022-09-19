@@ -6,8 +6,6 @@ param iotHubId string
 var privateEndpointName = 'priv-endpoint'
 var privateDnsZoneName = 'privatelink.azure-devices.net'
 var pvtEndpointDnsGroupName = '${privateEndpointName}/${vmName}dnsgroup'
-//var iotHubPrivateIp = '10.1.3.4'
-//var iotHubServiceBusPrivateIp = '10.1.3.5'
 var iotHubNsName = 'iothub-ns-${iotHubName}'
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {

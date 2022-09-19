@@ -3,6 +3,7 @@ param storageAccountNameIot string
 param storageContainerNameIot string
 param subnetIdIotHub string
 param storageAccountNameVm string
+param subnetIdVm string
 
 var saAcctType = 'Standard_LRS'
 
@@ -51,6 +52,16 @@ resource storageAcctVM 'Microsoft.Storage/storageAccounts@2019-06-01' = {
     allowBlobPublicAccess: false
     supportsHttpsTrafficOnly: true
     minimumTlsVersion: 'TLS1_2'
+    networkAcls: {
+      bypass: 'AzureServices'
+      virtualNetworkRules: [
+        {
+          id: subnetIdVm
+          action: 'Allow'
+        }
+      ]
+      defaultAction: 'Deny'
+    }
   }
 }
 
