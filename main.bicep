@@ -16,10 +16,7 @@ var storageAcctNameVm = 'savm${uniqueString(resourceGroup().id)}'
 module network 'networking.bicep' = {
   name: 'network-tailscale-deploy'
   params: {
-    vmName: vmName
     location: location
-    iotHubId: iotHub.outputs.hubId
-    iotHubName: hubName
   }
 }
 
@@ -43,6 +40,19 @@ module iotHub 'iot-hub.bicep' = {
     enableIotHubPublicAccess: enableIotHubPublicAccess
     storageAccountName: storageAccountNameIot
     storageContainerName: storageContainerNameIot
+  }
+}
+
+module privateEndpoints 'private-endpoints.bicep' = {
+  name: 'private-endpoints-deploy'
+  params: {
+    iotHubId: iotHub.outputs.hubId
+    iotHubName: hubName
+    iotHubPrivateIp: network.outputs.nicIotHubPrivateIp
+    iotHubServiceBusPrivateIp: network.outputs.nicIotSvcBusPrivateIp
+    privateEndpointSubnetId: network.outputs.subnetIdDefault
+    vNetId: network.outputs.vnetId
+    location: location
   }
 }
 
