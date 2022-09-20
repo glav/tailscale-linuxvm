@@ -32,6 +32,15 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
           addressPrefix: '10.1.2.0/24'
           privateEndpointNetworkPolicies: 'Disabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Storage'
+              locations: [
+                'AustraliaEast'
+                'AustraliaSouthEast'
+              ]
+            }
+          ]
           // networkSecurityGroup: {
           //   id: nsgVm.id
           //   location: location
