@@ -38,17 +38,17 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
     ]
     routing: {
       endpoints: {
-        storageContainers: [
-          {
-            connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-            containerName: storageContainerName
-            fileNameFormat: '{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}'
-            batchFrequencyInSeconds: 100
-            maxChunkSizeInBytes: 104857600
-            encoding: 'JSON'
-            name: storageEndpoint
-          }
-        ]
+        // storageContainers: [
+        //   {
+        //     connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        //     containerName: storageContainerName
+        //     fileNameFormat: '{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}'
+        //     batchFrequencyInSeconds: 100
+        //     maxChunkSizeInBytes: 104857600
+        //     encoding: 'JSON'
+        //     name: storageEndpoint
+        //   }
+        // ]
       }
       // routes: [
       //   {
