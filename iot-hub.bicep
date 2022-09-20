@@ -50,17 +50,17 @@ resource iotHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
           }
         ]
       }
-      routes: [
-        {
-          name: 'TailscaleStorageRoute'
-          source: 'DeviceMessages'
-          condition: 'level="storage"'
-          endpointNames: [
-            storageEndpoint
-          ]
-          isEnabled: true
-        }
-      ]
+      // routes: [
+      //   {
+      //     name: 'TailscaleStorageRoute'
+      //     source: 'DeviceMessages'
+      //     condition: 'level="storage"'
+      //     endpointNames: [
+      //       storageEndpoint
+      //     ]
+      //     isEnabled: true
+      //   }
+      // ]
     }
   }
 }
