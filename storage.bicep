@@ -10,12 +10,14 @@ var saAcctType = 'Standard_LRS'
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   name: storageAccountNameIot
   location: location
+  kind: 'StorageV2'
   sku: {
     name: saAcctType
   }
   properties: {
     minimumTlsVersion: 'TLS1_2'
     allowBlobPublicAccess: false
+    supportsHttpsTrafficOnly: true
     networkAcls: {
       bypass: 'AzureServices'
       virtualNetworkRules: [
@@ -26,9 +28,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
       ]
       defaultAction: 'Deny'
     }
-    supportsHttpsTrafficOnly: true
   }
-  kind: 'Storage'
 }
 
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
@@ -65,6 +65,4 @@ resource storageAcctVM 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   }
 }
 
-output storageAccountName string = storageAccountNameIot
-output storageContainerName string = storageContainerNameIot
 output vmStorageAccountBlobEndpoint string = storageAcctVM.properties.primaryEndpoints.blob
